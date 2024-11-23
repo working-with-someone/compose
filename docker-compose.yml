@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_USER: wws
+      MYSQL_PASSWORD: wws
+      MYSQL_ROOT_PASSWORD: wws
+      MYSQL_DATAABASE: wws
+
+    ports:
+      - "8306:3306"
+
+  rtmp:
+    build: ./rtmp/rtmp
+    ports:
+      - "1935:1935"
+      - "8001:8001"
+    container_name: wws-rtmp
+    volumes:
+      - ./rtmp/records:/records
