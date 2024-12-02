@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: mysql
@@ -47,6 +45,19 @@ services:
     ports:
       - "8000:8000"
     container_name: auth
+    develop:
+      watch:
+        - action: sync
+          path: ./auth/src
+          target: /app/src
+
+        - action: rebuild
+          path: ./auth/package.json
+          target: /app/package.json
+
+        - action: rebuild
+          path: ./auth/.env
+          target: /app/.env
 
   api:
     build: ./api
@@ -56,3 +67,35 @@ services:
     ports:
       - "8001:8001"
     container_name: api
+    develop:
+      watch:
+        - action: sync
+          path: ./api/src
+          target: /app/src
+
+        - action: rebuild
+          path: ./api/package.json
+          target: /app/package.json
+
+        - action: rebuild
+          path: ./api/.env
+          target: /app/.env
+
+  client:
+    build: ./client
+    ports:
+      - "8080:5173"
+    container_name: client
+    develop:
+      watch:
+        - action: sync
+          path: ./client/src
+          target: /app/src
+
+        - action: rebuild
+          path: ./client/package.json
+          target: /app/package.json
+
+        - action: rebuild
+          path: ./client/.env
+          target: /app/.env
