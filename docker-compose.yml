@@ -99,3 +99,22 @@ services:
         - action: rebuild
           path: ./client/.env
           target: /app/.env
+
+  live-session-hub:
+    build: ./live-session-hub
+    ports:
+      - "8005:8005"
+    container_name: live-session-hub
+    develop:
+      watch:
+        - action: sync
+          path: ./live-session-hub/src
+          target: /app/src
+
+        - action: rebuild
+          path: ./live-session-hub/package.json
+          target: /app/package.json
+
+        - action: rebuild
+          path: ./live-session-hub/.env
+          target: /app/.env
