@@ -36,6 +36,10 @@ services:
     container_name: rtmp
     volumes:
       - ./rtmp/records:/records
+    develop:
+      watch:
+        - action: rebuild
+          path: ./rtmp/rtmp/nginx.conf
 
   auth:
     build: ./auth
