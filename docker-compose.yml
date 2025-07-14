@@ -28,19 +28,6 @@ services:
       timeout: 5s
       retries: 55
 
-  rtmp:
-    build: ./rtmp/rtmp
-    ports:
-      - "1935:1935"
-      - "8004:8004"
-    container_name: rtmp
-    volumes:
-      - ./rtmp/records:/records
-    develop:
-      watch:
-        - action: rebuild
-          path: ./rtmp/rtmp/nginx.conf
-
   auth:
     build: ./auth
     depends_on:
@@ -54,6 +41,14 @@ services:
         - action: sync
           path: ./auth/src
           target: /app/src
+
+        - action: sync
+          path: ./auth/public
+          target: /app/public
+
+        - action: sync
+          path: ./auth/views
+          target: /app/views
 
         - action: rebuild
           path: ./auth/package.json
@@ -76,6 +71,10 @@ services:
         - action: sync
           path: ./api/src
           target: /app/src
+        
+        - action: rebuild
+          path: ./api/prisma
+          target: /app/prisma
 
         - action: rebuild
           path: ./api/package.json
@@ -122,3 +121,38 @@ services:
         - action: rebuild
           path: ./live-session-hub/.env
           target: /app/.env
+
+  media-server:
+    container_name: media-server
+    build: ./media-server
+    ports:
+      - "1935:1935"
+      - "1936:1936"
+      - "8010:8010"
+      - "8443:8443"
+      - "1080:1080"
+    volumes:
+      - ./media-server/video:/video
+    develop:
+      watch:
+        - action: sync
+          path: ./media-server/src
+          target: /app/src
+
+        - action: rebuild
+          path: ./media-server/package.json
+          target: /app/package.json
+
+        - action: rebuild
+          path: ./media-server/.env
+          target: /app/.env
+    
+
+  # es01:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+  #   container_name: es
+  #   ports:
+  #     - "9200:9200"
+  #   environment:
+  #     - node.name=es01
+  #     - ELASTIC_PASSWORD=kmckshkmc
